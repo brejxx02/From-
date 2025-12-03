@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login — Premium MLM Demo</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="header">
+  <div class="brand">PREMIUM MLM SCRIPT</div>
+  <nav><a href="index.html">Home</a><a href="register.html">Register</a></nav>
+</header>
+
+<main class="container">
+  <div class="card" style="max-width:520px;margin:auto">
+    <h2>Login to your account</h2>
+    <div class="small">Use demo credentials if you want to explore quickly.</div>
+    <input id="username" class="input" placeholder="Username or ID">
+    <input id="password" class="input" placeholder="Password" type="password">
+    <div style="display:flex;gap:10px;margin-top:12px">
+      <button class="btn" onclick="doLogin()">Login</button>
+      <a class="btn ghost" href="register.html" style="text-align:center;line-height:40px">Register</a>
+    </div>
+    <div style="margin-top:12px" id="msg" class="small"></div>
+    <div style="margin-top:14px" class="code">Demo: admin/admin123  —  demo/demo123</div>
+  </div>
+</main>
+
+<script src="app.js"></script>
+<script>
+function doLogin(){
+  const u = document.getElementById('username').value.trim();
+  const p = document.getElementById('password').value;
+  const r = window.App && App.auth && App.auth.login(u,p);
+  const msg = document.getElementById('msg');
+  if(r && r.ok){
+    msg.innerText = 'Login success. Redirecting...';
+    setTimeout(()=> location.href='dashboard.html', 600);
+  } else {
+    msg.innerText = r && r.error ? r.error : 'Invalid credentials';
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin — Premium MLM Demo</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="header">
+  <div class="brand">PREMIUM MLM SCRIPT</div>
+  <nav><a href="index.html">Home</a><a href="dashboard.html">Dashboard</a><a href="#" onclick="App.auth.logout();return false" style="color:#ffb3b3">Logout</a></nav>
+</header>
+
+<main class="container">
+  <div class="card">
+    <h2>Admin Console</h2>
+    <div class="small">Only accessible for admin users (demo admin/admin123)</div>
+    <div style="margin-top:12px">
+      <button class="btn" onclick="App.admin.exportAll()">Export All Users (CSV)</button>
+      <button class="btn ghost" onclick="App.admin.resetDemo()" style="margin-left:8px">Reset Demo Data</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Users</h3>
+    <table class="table" id="users_table"><thead><tr><th>Username</th><th>Name</th><th>Balance</th><th>Referrer</th><th>Actions</th></tr></thead><tbody></tbody></table>
+  </div>
+</main>
+
+<script src="app.js"></script>
+<script>
+if(!App.auth.isLogged() || !App.auth.current().is_admin){ alert('Admin access only'); location.href='login.html'; }
+function renderAdmin(){
+  const users = App.users.list();
+  const tbody = document.querySelector('#users_table tbody'); tbody.innerHTML = '';
+  users.forEach(u=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${u.username}</td><td>${u.name}</td><td>$${Number(u.balance).toFixed(2)}</td><td>${u.ref||''}</td>
+      <td>
+        <button class="btn ghost" onclick="App.admin.settle('${u.username}')">Settle</button>
+        <button class="btn" onclick="App.admin.view('${u.username}')">View</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+renderAdmin();
+</script>
+</body>
+</html>

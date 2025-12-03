@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard — Premium MLM Demo</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="header">
+  <div class="brand">PREMIUM MLM SCRIPT</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="admin.html">Admin</a>
+    <a href="#" onclick="App.auth.logout();return false" style="color:#ffb3b3">Logout</a>
+  </nav>
+</header>
+
+<main class="container">
+  <div class="grid">
+    <div>
+      <div class="card">
+        <h2 id="u_name">Hello, User</h2>
+        <div class="small">Wallet Balance: <b id="u_balance">$0.00</b></div>
+        <div style="margin-top:12px">
+          <button class="btn" onclick="App.users.simulateJoinUnderMe()">Simulate New Signup under me</button>
+          <button class="btn ghost" onclick="App.users.exportMyData()" style="margin-left:8px">Export My Data</button>
+        </div>
+        <div class="notice" id="r_link" style="margin-top:12px"></div>
+      </div>
+
+      <div class="card">
+        <h3>Transactions</h3>
+        <table class="table" id="tx_table"><thead><tr><th>Type</th><th>Amount</th><th>Info</th><th>Time</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+
+    <aside>
+      <div class="card">
+        <h3>Your Direct Referrals</h3>
+        <div id="downline" style="min-height:80px"></div>
+      </div>
+
+      <div class="card">
+        <h3>Quick Stats</h3>
+        <div class="small">Total Direct: <b id="stat_direct">0</b></div>
+        <div class="small">Total Team: <b id="stat_team">0</b></div>
+        <div style="margin-top:10px"><a class="btn ghost" href="register.html?ref=demo">Create referral link</a></div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<script src="app.js"></script>
+<script>
+if(!App.auth.isLogged()) { alert('Please login'); location.href='login.html'; }
+function render(){
+  const me = App.auth.current();
+  document.getElementById('u_name').innerText = 'Hello, ' + me.name;
+  const dbUser = App.users.get(me.username);
+  document.getElementById('u_balance').innerText = '$' + Number(dbUser.balance||0).toFixed(2);
+  document.getElementById('r_link').innerHTML = '<b>Referral link:</b><div class="code">'+location.origin+'/register.html?ref='+me.username+'</div>';
+  // transactions
+  const txs = App.users.getTransactions(me.username);
+  const tbody = document.querySelector('#tx_table tbody'); tbody.innerHTML = '';
+  txs.forEach(t=> {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${t.type}</td><td>$${Number(t.amount).toFixed(2)}</td><td>${t.info||''}</td><td>${new Date(t.time).toLocaleString()}</td>`;
+    tbody.appendChild(tr);
+  });
+  // direct referrals
+  const direct = App.users.getDirect(me.username);
+  document.getElementById('downline').innerHTML = direct.map(d=>'<div class="small">'+d.username+' — '+d.name+'</div>').join('') || '<div class="small">No direct referrals yet</div>';
+  document.getElementById('stat_direct').innerText = direct.length;
+  document.getElementById('stat_team').innerText = App.users.getTeamCount(me.username);
+}
+render();
+// allow external simulate to refresh
+window._renderDashboard = render;
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Premium MLM Demo — Home</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="header">
+  <div class="brand">PREMIUM MLM SCRIPT</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="login.html">Login</a>
+    <a href="register.html">Register</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="admin.html">Admin</a>
+  </nav>
+</header>
+
+<main class="container">
+  <div class="card">
+    <h1 style="margin:0 0 6px">Ready-made Premium MLM Demo</h1>
+    <div class="small">A frontend demo that looks and feels like a paid ₹50k script. Simulated accounts, multi-page, referral flow and admin tools — all in browser (LocalStorage).</div>
+    <div style="margin-top:12px" class="kpi">
+      <div class="box"><div class="small">Active Users</div><div style="font-size:20px;font-weight:700">1,250</div></div>
+      <div class="box"><div class="small">Total Payouts</div><div style="font-size:20px;font-weight:700">$14,820</div></div>
+      <div class="box"><div class="small">Platform Balance</div><div style="font-size:20px;font-weight:700">$4,520</div></div>
+    </div>
+    <div class="notice">Demo Login accounts: <b>admin / admin123</b> and <b>demo / demo123</b>. Use Register to create custom users (supports referral code in URL).</div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="card">
+        <h3>Platform Features</h3>
+        <ul class="small">
+          <li>Multi-level referral payouts (configurable levels)</li>
+          <li>Dashboard with downline preview and wallet</li>
+          <li>Admin: user list, settle payouts, CSV export</li>
+          <li>Referral links auto-detect (register?ref=USERID)</li>
+        </ul>
+        <div style="margin-top:12px">
+          <a class="btn" href="register.html">Create Free Demo Account</a>
+          <a class="btn ghost" href="login.html" style="margin-left:8px">Go To Login</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>How to demo (quick)</h3>
+        <ol class="small">
+          <li>Open <b>login</b> (admin/admin123 or demo/demo123)</li>
+          <li>Visit Dashboard, simulate new signups under you</li>
+          <li>Check Admin page to view users and settle balances</li>
+        </ol>
+        <div style="margin-top:10px" class="code">Referral example: register.html?ref=demo (will prefill referral)</div>
+      </div>
+    </div>
+
+    <aside>
+      <div class="card">
+        <h3>Demo Accounts</h3>
+        <div class="small"><b>Admin</b><br> Username: <b>admin</b><br>Password: <b>admin123</b></div>
+        <hr style="opacity:0.06">
+        <div class="small"><b>Demo User</b><br> Username: <b>demo</b><br>Password: <b>demo123</b></div>
+      </div>
+
+      <div class="card">
+        <h3>Quick Links</h3>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <a class="btn" href="register.html?ref=demo">Register under Demo</a>
+          <a class="btn ghost" href="dashboard.html">Open Dashboard (requires login)</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="card">
+    <h3>Notes</h3>
+    <div class="small">This demo runs entirely in your browser using LocalStorage. It intentionally simulates backend flows so you can review UI and logic before building a real server-side implementation.</div>
+  </div>
+
+  <div class="footer">Made for demo • Not for production</div>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

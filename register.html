@@ -6,19 +6,27 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="header">
-  <div class="brand">PREMIUM MLM SCRIPT</div>
-  <nav><a href="index.html">Home</a><a href="login.html">Login</a></nav>
-</header>
-
+<header class="header"><div class="brand">PREMIUM MLM SCRIPT</div></header>
 <main class="container">
   <div class="card" style="max-width:720px;margin:auto">
     <h2>Create Demo Account</h2>
-    <div class="small">Referral code (optional) will credit upline when creating account.</div>
+    <div class="small">Referral code optional. You may upload KYC (ID image) later from Dashboard.</div>
+
     <input id="r_name" class="input" placeholder="Full name">
     <input id="r_username" class="input" placeholder="Username (unique)">
     <input id="r_password" class="input" placeholder="Password" type="password">
+
+    <label class="small">Choose Plan (optional, can buy later)</label>
+    <select id="planSelect" class="input">
+      <option value="">No plan</option>
+    </select>
+
+    <label class="small">Referral ID (optional)</label>
     <input id="r_ref" class="input" placeholder="Referral ID (optional)">
+
+    <label class="small">Upload KYC (ID image) — optional</label>
+    <input id="r_kyc" type="file" class="input" accept="image/*">
+
     <div style="display:flex;gap:10px;margin-top:12px">
       <button class="btn" onclick="doRegister()">Create Account</button>
       <a class="btn ghost" href="login.html" style="line-height:40px">Have an account?</a>
@@ -29,24 +37,58 @@
 
 <script src="app.js"></script>
 <script>
-// prefill ref from URL if present
-(function(){
-  const q = new URLSearchParams(location.search);
-  if(q.get('ref')) document.getElementById('r_ref').value = q.get('ref');
+(function init(){
+  // populate plan select from DB
+  const plans = App.DB.settings.plans || [];
+  const sel = document.getElementById('planSelect');
+  plans.forEach(p=>{
+    const opt = document.createElement('option');
+    opt.value = p.id;
+    opt.textContent = `${p.name} — $${p.price} — ROI ${p.roi_percent}%`;
+    sel.appendChild(opt);
+  });
 })();
+
+function getFileBase64(inputEl, cb){
+  const f = inputEl.files && inputEl.files[0];
+  if(!f) return cb(null);
+  const r = new FileReader();
+  r.onload = ()=> cb(r.result);
+  r.readAsDataURL(f);
+}
+
 function doRegister(){
   const name = document.getElementById('r_name').value.trim();
   const username = document.getElementById('r_username').value.trim();
   const password = document.getElementById('r_password').value;
   const ref = document.getElementById('r_ref').value.trim() || null;
-  const out = App.users.register({name,username,password,ref});
-  const msg = document.getElementById('regmsg');
-  if(out.ok){
-    msg.innerText = 'Registered successfully. You can now login.';
-    setTimeout(()=> location.href='login.html',800);
-  } else {
-    msg.innerText = out.error || 'Error';
-  }
+  const selectedPlan = document.getElementById('planSelect').value || null;
+  const kycInput = document.getElementById('r_kyc');
+
+  if(!name || !username || !password) { regmsg.innerText = 'Please fill required fields'; return; }
+
+  getFileBase64(kycInput, function(base64){
+    // register user
+    const out = App.Users.register({ name, username, password, ref });
+    if(!out.ok){ regmsg.innerText = out.error || 'Error creating account'; return; }
+    // if KYC uploaded submit
+    if(base64){
+      App.KYC.submit(username, base64);
+    }
+    // if plan selected attempt to purchase after registering by creating fake deposit or direct wallet reduction
+    if(selectedPlan){
+      // For ease: top-up user's wallet with plan price via fake gateway and auto-complete
+      const plan = App.DB.settings.plans.find(p=>p.id===selectedPlan);
+      // Create order
+      const order = App.Payments.createOrder(username, plan.price);
+      // Simulate gateway success immediately for demo
+      App.Payments.simulateGatewaySuccess(order.id);
+      // Purchase plan by debiting wallet
+      App.Users.purchasePlan(username, selectedPlan);
+    }
+    regmsg.innerText = 'Account created. Redirecting to login...';
+    setTimeout(()=> location.href = 'login.html', 900);
+  });
 }
 </script>
 </body>

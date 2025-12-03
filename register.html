@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Register — Premium MLM Demo</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="header">
+  <div class="brand">PREMIUM MLM SCRIPT</div>
+  <nav><a href="index.html">Home</a><a href="login.html">Login</a></nav>
+</header>
+
+<main class="container">
+  <div class="card" style="max-width:720px;margin:auto">
+    <h2>Create Demo Account</h2>
+    <div class="small">Referral code (optional) will credit upline when creating account.</div>
+    <input id="r_name" class="input" placeholder="Full name">
+    <input id="r_username" class="input" placeholder="Username (unique)">
+    <input id="r_password" class="input" placeholder="Password" type="password">
+    <input id="r_ref" class="input" placeholder="Referral ID (optional)">
+    <div style="display:flex;gap:10px;margin-top:12px">
+      <button class="btn" onclick="doRegister()">Create Account</button>
+      <a class="btn ghost" href="login.html" style="line-height:40px">Have an account?</a>
+    </div>
+    <div id="regmsg" class="small" style="margin-top:10px"></div>
+  </div>
+</main>
+
+<script src="app.js"></script>
+<script>
+// prefill ref from URL if present
+(function(){
+  const q = new URLSearchParams(location.search);
+  if(q.get('ref')) document.getElementById('r_ref').value = q.get('ref');
+})();
+function doRegister(){
+  const name = document.getElementById('r_name').value.trim();
+  const username = document.getElementById('r_username').value.trim();
+  const password = document.getElementById('r_password').value;
+  const ref = document.getElementById('r_ref').value.trim() || null;
+  const out = App.users.register({name,username,password,ref});
+  const msg = document.getElementById('regmsg');
+  if(out.ok){
+    msg.innerText = 'Registered successfully. You can now login.';
+    setTimeout(()=> location.href='login.html',800);
+  } else {
+    msg.innerText = out.error || 'Error';
+  }
+}
+</script>
+</body>
+</html>
